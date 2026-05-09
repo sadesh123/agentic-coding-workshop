@@ -1,0 +1,31 @@
+---
+/**
+ * Email Icon Component
+ * Displays an email/envelope icon as an inline SVG.
+ * Props:
+ *   - size?: number (default: 24) - Icon size in pixels
+ *   - aria-label?: string - Accessible label for the icon
+ */
+
+interface Props {
+  size?: number;
+  'aria-label'?: string;
+}
+
+const { size = 24, 'aria-label': ariaLabel = 'Email' } = Astro.props;
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-label={ariaLabel}
+>
+  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+</svg>
