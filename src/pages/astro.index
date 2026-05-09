@@ -1,0 +1,26 @@
+---
+// 🥚 KIRO TIP: Ask Kiro to generate property-based tests for these components to ensure they render correctly with various data inputs.
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import About from '../components/About.astro';
+import Experience from '../components/Experience.astro';
+import Education from '../components/Education.astro';
+import Skills from '../components/Skills.astro';
+import Projects from '../components/Projects.astro';
+import Contact from '../components/Contact.astro';
+import TearableOverlay from '../components/TearableOverlay.astro';
+import { resumeData } from '../data/resume';
+---
+
+<Layout title={resumeData.header.name}>
+  <TearableOverlay />
+  <Header data={resumeData.header} />
+  <About data={resumeData.about} />
+  <Experience data={resumeData.experience} />
+  <Education data={resumeData.education} />
+  <Skills data={resumeData.skills} />
+  <Projects data={resumeData.projects} />
+  <Contact data={resumeData.contact} />
+</Layout>
+
