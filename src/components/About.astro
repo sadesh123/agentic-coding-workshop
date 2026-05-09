@@ -1,0 +1,21 @@
+---
+/**
+ * About Component
+ * Displays a biographical section with a brief description.
+ * Props:
+ *   - data: AboutData - Contains bio text
+ */
+
+import type { AboutData } from '../data/resume';
+
+interface Props {
+  data: AboutData;
+}
+
+const { data } = Astro.props;
+---
+
+<section id="about">
+  <h2>About</h2>
+  <p style="animation: slideInUp 0.6s ease-out 0.2s both; line-height: 1.8;">{data.bio}</p>
+</section>
