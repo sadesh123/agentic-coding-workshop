@@ -1,0 +1,18 @@
+---
+/**
+ * Node.js Logo Component
+ * Displays the Node.js logo as an inline SVG.
+ * Props:
+ *   - size?: number (default: 24) - Logo size in pixels
+ */
+
+interface Props {
+  size?: number;
+}
+
+const { size = 24 } = Astro.props;
+---
+
+<svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+  <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2.5 17.5c-.276 0-.5-.224-.5-.5v-7c0-.276.224-.5.5-.5s.5.224.5.5v7c0 .276-.224.5-.5.5zm5 0c-.276 0-.5-.224-.5-.5v-7c0-.276.224-.5.5-.5s.5.224.5.5v7c0 .276-.224.5-.5.5zm2.5-5c-.276 0-.5-.224-.5-.5v-2c0-.276.224-.5.5-.5s.5.224.5.5v2c0 .276-.224.5-.5.5z"/>
+</svg>
