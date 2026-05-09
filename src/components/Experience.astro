@@ -1,0 +1,68 @@
+---
+/**
+ * Experience Component
+ * Displays work history with company, role, date range, and responsibilities.
+ * Props:
+ *   - data: ExperienceEntry[] - Array of work experience entries
+ */
+
+import type { ExperienceEntry } from '../data/resume';
+
+interface Props {
+  data: ExperienceEntry[];
+}
+
+const { data } = Astro.props;
+---
+
+<section id="experience">
+  <h2>Experience</h2>
+  {data.length === 0 ? (
+    <p class="empty-state">No entries yet.</p>
+  ) : (
+    <div>
+      {data.map((entry, index) => (
+        <div 
+          style={`
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--color-surface-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--color-accent);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+            animation-delay: ${index * 0.1}s;
+            animation-fill-mode: both;
+          `}
+          class="experience-entry"
+        >
+          <h3 style="margin-top: 0;">{entry.role}</h3>
+          <p style="color: var(--color-muted); margin: 0.5rem 0; font-weight: 500;">
+            {entry.company} • {entry.dateRange}
+          </p>
+          <ul style="margin-top: 1rem;">
+            {entry.responsibilities.map((responsibility, respIndex) => (
+              <li style={`animation-delay: ${(index * 0.1) + (respIndex * 0.05)}s;`}>
+                {responsibility}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
+
+<style>
+  .experience-entry {
+    cursor: pointer;
+  }
+
+  .experience-entry:hover {
+    transform: translateX(4px);
+    border-left-color: var(--color-accent-light);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+  }
+</style>
+
+<!-- 🥚 KIRO TIP: Ask Kiro to refactor this component to use a separate card component for each entry. -->

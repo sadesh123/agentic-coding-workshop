@@ -1,0 +1,59 @@
+---
+/**
+ * Education Component
+ * Displays educational background with institution, degree, and graduation year.
+ * Props:
+ *   - data: EducationEntry[] - Array of education entries
+ */
+
+import type { EducationEntry } from '../data/resume';
+
+interface Props {
+  data: EducationEntry[];
+}
+
+const { data } = Astro.props;
+---
+
+<section id="education">
+  <h2>Education</h2>
+  {data.length === 0 ? (
+    <p class="empty-state">No entries yet.</p>
+  ) : (
+    <div>
+      {data.map((entry, index) => (
+        <div 
+          style={`
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--color-surface-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--color-accent);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+            animation-delay: ${index * 0.1}s;
+            animation-fill-mode: both;
+          `}
+          class="education-entry"
+        >
+          <h3 style="margin-top: 0;">{entry.degree}</h3>
+          <p style="color: var(--color-muted); margin: 0; font-weight: 500;">
+            {entry.institution} • {entry.graduationYear}
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
+
+<style>
+  .education-entry {
+    cursor: pointer;
+  }
+
+  .education-entry:hover {
+    transform: translateX(4px);
+    border-left-color: var(--color-accent-light);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+  }
+</style>

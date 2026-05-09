@@ -1,0 +1,122 @@
+---
+/**
+ * Contact Component
+ * Displays contact information with email, GitHub, and LinkedIn links.
+ * Props:
+ *   - data: ContactData - Contains email, github, and linkedin URLs
+ */
+
+import type { ContactData } from '../data/resume';
+import IconEmail from './icons/IconEmail.astro';
+import IconGitHub from './icons/IconGitHub.astro';
+import IconLinkedIn from './icons/IconLinkedIn.astro';
+
+interface Props {
+  data: ContactData;
+}
+
+const { data } = Astro.props;
+---
+
+<section id="contact">
+  <h2>Contact</h2>
+  <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+    <a 
+      href={`mailto:${data.email}`} 
+      style="
+        display: flex; 
+        align-items: center; 
+        gap: 0.5rem; 
+        color: var(--color-text);
+        padding: 0.75rem 1.5rem;
+        background-color: var(--color-surface-light);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        animation: slideInUp 0.5s ease-out;
+        animation-fill-mode: both;
+      "
+      class="contact-link"
+    >
+      <IconEmail size={20} aria-label="Email" />
+      <span>{data.email}</span>
+    </a>
+    <a 
+      href={data.github} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      style="
+        display: flex; 
+        align-items: center; 
+        gap: 0.5rem; 
+        color: var(--color-text);
+        padding: 0.75rem 1.5rem;
+        background-color: var(--color-surface-light);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        animation: slideInUp 0.5s ease-out;
+        animation-delay: 0.1s;
+        animation-fill-mode: both;
+      "
+      class="contact-link"
+    >
+      <IconGitHub size={20} aria-label="GitHub" />
+      <span>GitHub</span>
+    </a>
+    <a 
+      href={data.linkedin} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      style="
+        display: flex; 
+        align-items: center; 
+        gap: 0.5rem; 
+        color: var(--color-text);
+        padding: 0.75rem 1.5rem;
+        background-color: var(--color-surface-light);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        animation: slideInUp 0.5s ease-out;
+        animation-delay: 0.2s;
+        animation-fill-mode: both;
+      "
+      class="contact-link"
+    >
+      <IconLinkedIn size={20} aria-label="LinkedIn" />
+      <span>LinkedIn</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .contact-link {
+    border: 1px solid var(--color-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .contact-link:hover::before {
+    left: 100%;
+  }
+
+  .contact-link:hover {
+    border-color: var(--color-accent);
+    background-color: var(--color-surface);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(124, 58, 237, 0.3);
+  }
+
+  .contact-link:hover svg {
+    transform: scale(1.2) rotate(5deg);
+  }
+</style>

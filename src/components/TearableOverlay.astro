@@ -1,0 +1,245 @@
+---
+/**
+ * Tearable Overlay Component
+ * 
+ * Creates an interactive scratch-off overlay where users can drag to erase
+ * the purple cloth and reveal the resume underneath.
+ * 
+ * Props: None (standalone component)
+ * 
+ * Features:
+ * - Simple scratch/erase interaction using canvas clearRect
+ * - Particle effects on scratch
+ * - Mouse and touch support
+ * - Smooth performance
+ */
+---
+
+<div id="tearable-wrapper" class="tearable-wrapper">
+  <canvas id="tearable-canvas"></canvas>
+</div>
+
+<style>
+  .tearable-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  #tearable-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    touch-action: none;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  /**
+   * Simple scratch-off overlay using canvas
+   * Draws purple gradient, erases on drag, preserves erased state
+   */
+
+  interface Particle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+  }
+
+  const canvas = document.getElementById('tearable-canvas') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+  const wrapper = document.getElementById('tearable-wrapper') as HTMLDivElement;
+
+  // Interaction parameters
+  const SCRATCH_RADIUS = 100;
+  const PARTICLE_EMISSION_COUNT = 10;
+  const PARTICLE_SPEED = 3;
+
+  let particles: Particle[] = [];
+  let mouseX = 0;
+  let mouseY = 0;
+  let mouseDown = false;
+  let isInitialized = false;
+  let canvasImageData: ImageData | null = null;
+
+  /**
+   * Resize canvas to match wrapper dimensions
+   */
+  function resizeCanvas() {
+    canvas.width = wrapper.offsetWidth;
+    canvas.height = wrapper.offsetHeight;
+    
+    if (!isInitialized) {
+      drawInitialOverlay();
+      isInitialized = true;
+    }
+  }
+
+  /**
+   * Draw the initial purple overlay with instruction text
+   */
+  function drawInitialOverlay() {
+    // Draw purple gradient background
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, '#a855f7');
+    gradient.addColorStop(1, '#7c3aed');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw instruction text
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 2;
+    ctx.fillText('Scratch to reveal your resume! 👇', canvas.width / 2, canvas.height / 2);
+    ctx.shadowColor = 'transparent';
+
+    // Save the initial state
+    canvasImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  /**
+   * Mouse event handlers
+   */
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+  });
+
+  canvas.addEventListener('mousedown', () => {
+    mouseDown = true;
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    mouseDown = false;
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    mouseDown = false;
+  });
+
+  /**
+   * Touch event handlers
+   */
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    mouseX = touch.clientX - rect.left;
+    mouseY = touch.clientY - rect.top;
+  });
+
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    mouseDown = true;
+  });
+
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    mouseDown = false;
+  });
+
+  /**
+   * Emit particles from interaction point
+   */
+  function createParticles(x: number, y: number, count: number = PARTICLE_EMISSION_COUNT) {
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.8;
+      const speed = PARTICLE_SPEED + Math.random() * 2;
+      particles.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1.5,
+        life: 1,
+      });
+    }
+  }
+
+  /**
+   * Erase circular area from canvas
+   */
+  function scratchOverlay(x: number, y: number) {
+    if (!canvasImageData) return;
+
+    // Use destination-out to erase
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+    ctx.beginPath();
+    ctx.arc(x, y, SCRATCH_RADIUS, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Save the current state (with erased area)
+    canvasImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    // Emit particles
+    createParticles(x, y);
+  }
+
+  /**
+   * Update particles
+   */
+  function updateParticles() {
+    particles = particles.filter((p) => p.life > 0);
+    particles.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.15; // Gravity
+      p.life -= 0.015;
+    });
+  }
+
+  /**
+   * Draw particles on top of canvas
+   */
+  function drawParticles() {
+    particles.forEach((p) => {
+      ctx.fillStyle = `rgba(168, 85, 247, ${p.life * 0.8})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  /**
+   * Main animation loop
+   */
+  function animate() {
+    // Restore the saved canvas state (with all previous erases)
+    if (canvasImageData) {
+      ctx.putImageData(canvasImageData, 0, 0);
+    }
+
+    // Handle interaction
+    if (mouseDown) {
+      scratchOverlay(mouseX, mouseY);
+    }
+
+    // Update and draw particles
+    updateParticles();
+    drawParticles();
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+

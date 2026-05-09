@@ -1,0 +1,92 @@
+---
+/**
+ * Projects Component
+ * Displays portfolio projects with name, description, and link.
+ * Props:
+ *   - data: ProjectEntry[] - Array of project entries
+ */
+
+import type { ProjectEntry } from '../data/resume';
+import IconExternalLink from './icons/IconExternalLink.astro';
+
+interface Props {
+  data: ProjectEntry[];
+}
+
+const { data } = Astro.props;
+---
+
+<section id="projects">
+  <h2>Projects</h2>
+  {data.length === 0 ? (
+    <p class="empty-state">No entries yet.</p>
+  ) : (
+    <div style="display: grid; gap: 1.5rem;">
+      {data.map((project, index) => (
+        <div 
+          style={`
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--color-surface-light) 0%, var(--color-surface) 100%);
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+            animation-delay: ${index * 0.15}s;
+            animation-fill-mode: both;
+            cursor: pointer;
+          `}
+          class="project-card"
+        >
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <h3 style="margin: 0;">{project.name}</h3>
+            <a 
+              href={project.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label={`View ${project.name} project`}
+              style="display: inline-flex; align-items: center; opacity: 0.7; transition: all 0.3s ease;"
+              class="project-link"
+            >
+              <IconExternalLink size={18} aria-label="" />
+            </a>
+          </div>
+          <p style="margin: 0; color: var(--color-text-secondary);">{project.description}</p>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
+
+<style>
+  .project-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transition: left 0.5s ease;
+    pointer-events: none;
+  }
+
+  .project-card:hover::before {
+    left: 100%;
+  }
+
+  .project-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--color-accent);
+    box-shadow: 0 12px 24px rgba(124, 58, 237, 0.3);
+  }
+
+  .project-link:hover {
+    opacity: 1;
+    transform: scale(1.3) rotate(-10deg);
+  }
+</style>

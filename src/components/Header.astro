@@ -1,0 +1,66 @@
+---
+/**
+ * Header Component
+ * Displays the resume header with name, title, and avatar.
+ * Props:
+ *   - data: HeaderData - Contains name, title, avatarInitials, and avatarAlt
+ */
+
+import type { HeaderData } from '../data/resume';
+import IconKiroGhost from './icons/IconKiroGhost.astro';
+
+interface Props {
+  data: HeaderData;
+}
+
+const { data } = Astro.props;
+---
+
+<section id="header">
+  <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; animation: slideInLeft 0.8s ease-out;">
+    <div
+      style="
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+        animation: float 3s ease-in-out infinite;
+        transition: all 0.3s ease;
+      "
+      role="img"
+      aria-label={data.avatarAlt}
+      class="avatar"
+    >
+      {data.avatarInitials}
+    </div>
+    <div style="animation: slideInRight 0.8s ease-out;">
+      <h1>{data.name}</h1>
+      <p style="font-size: var(--font-size-h3); color: var(--color-accent); margin: 0; animation: fadeIn 1s ease-out 0.3s both;">
+        {data.title}
+      </p>
+    </div>
+  </div>
+  <!-- 🥚 KIRO TIP: The Kiro ghost marks learning tips throughout this codebase—find all 6 to master agentic coding concepts! -->
+  <div style="position: relative; display: inline-block; animation: slideInUp 0.8s ease-out 0.4s both;" class="kiro-tip-trigger">
+    <IconKiroGhost size={24} aria-label="Kiro ghost Easter egg marker" />
+    <span class="kiro-tip" aria-hidden="true">Find all 6 Easter eggs to learn Kiro concepts!</span>
+  </div>
+</section>
+
+<style>
+  section {
+    margin-bottom: var(--space-xl);
+  }
+
+  .avatar:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 32px rgba(124, 58, 237, 0.6);
+  }
+</style>
